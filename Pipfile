@@ -10,6 +10,7 @@ sqlalchemy = "*"
 psycopg2 = "*"
 python-jose = {extras = ["cryptography"], version = "*"}
 python-multipart = "*"
+gunicorn = "*"
 
 [dev-packages]
 
