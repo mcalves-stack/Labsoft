@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 anyio==3.6.2
 bcrypt==4.0.1
 cffi==1.15.1
@@ -24,3 +25,16 @@ SQLAlchemy==1.4.44
 starlette==0.22.0
 typing_extensions==4.4.0
 uvicorn==0.20.0
+=======
+bcrypt==4.0.1
+cryptography==38.0.4
+fastapi==0.88.0
+gunicorn==20.1.0
+passlib==1.7.4
+psycopg2==2.9.5
+pydantic==1.10.2
+python-jose==3.3.0
+python-multipart==0.0.5
+SQLAlchemy==1.4.44
+uvicorn==0.20.0
+>>>>>>> c1e6226372f6456b02e42d4e9ce6bee3929f49e1
