@@ -24,13 +24,4 @@ class Sala(Base):
     computador = Column(Integer, nullable=False)
 
 
-class Reserva(Base):
-    __tablename__ = "reserva"
-
-    IdReserva = Column(Integer, primary_key=True, autoincrement=True)
-    Data = Column(DATETIME, nullable=False)
-    IdSala = Column(Integer, nullable=False)
-    IdProfessor = Column(Integer, nullable=False)
- 
-
     
