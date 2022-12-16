@@ -10,6 +10,12 @@ class Usuario(Base):
     password = Column(String, nullable=False)
     materiaUsuario = Column(String, nullable=False)
     raUsuario = Column(Integer, nullable=False)
+ 
+class TipoUser(Base):
+    __tablename__ = "tipousers"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    tipo = Column(Integer, nullable=False)
 
 class Sala(Base):
     __tablename__ = "sala"
@@ -23,5 +29,3 @@ class Sala(Base):
     projetor = Column(Boolean, nullable=False)
     computador = Column(Integer, nullable=False)
 
-
-    

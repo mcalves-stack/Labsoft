@@ -21,7 +21,7 @@ class UserCreate(BaseModel):
     login: str
     password: str
     materiaUsuario: str
-    raUsuario: str
+    raUsuario: int
 
 
 class UserLogin(BaseModel):

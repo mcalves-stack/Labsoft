@@ -2,7 +2,7 @@ from fastapi import FastAPI, Response, status, HTTPException, Depends
 from fastapi.params import Body
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-import models, schemas, utils, oauth2
+import models, schemas, oauth2
 from database import engine, get_db
 from typing import List, Optional
 
@@ -34,9 +34,6 @@ def read_root():
 
 @app.post("/createuser", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-
-  hashed_password = utils.hash(user.password)
-  user.password = hashed_password
 
   new_user = models.Usuario(**user.dict())
   db.add(new_user)
@@ -72,7 +69,7 @@ def delete_post(id: int, db: Session = Depends(get_db), user_id: int = Depends(o
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 @app.get("/users")
-def get_users(db: Session = Depends(get_db),limit: int = 10, skip: int = 0, search: Optional[str] = "", user_id: int = Depends(oauth2.get_current_user)):
+def get_users(db: Session = Depends(get_db),limit: int = 10, skip: int = 0, search: Optional[str] = "", ):
     users = db.query(models.Usuario).all()
     return {"data": users}
 
