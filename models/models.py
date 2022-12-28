@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DATETIME
-from sqlalchemy.sql.expression import Null
-from connection.database import Base
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, UniqueConstraint
+from database import Base
+from sqlalchemy.sql.sqltypes import TIMESTAMP
+from sqlalchemy.sql.expression import text
+from datetime import datetime
 
 class Usuario(Base):
     __tablename__ = "usuarios"
@@ -10,17 +12,32 @@ class Usuario(Base):
     password = Column(String, nullable=False)
     materiaUsuario = Column(String, nullable=False)
     raUsuario = Column(Integer, nullable=False)
- 
+    created_at = Column(TIMESTAMP(timezone=True),
+                        nullable=False, server_default=text('now()'))
+   
 class TipoUser(Base):
     __tablename__ = "tipousers"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    tipo = Column(Integer, nullable=False)
+    type = Column(Integer, nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True),
+                        nullable=False, server_default=text('now()'))
+
+class Professor(Base):
+    __tablename__ = "professores"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    nome = Column(String, nullable=False)
+    Id_Professor = Column(Integer, nullable=False, unique=True)
+    UniqueConstraint("Id_Professor", name="id_professorunique")
+    created_at = Column(TIMESTAMP(timezone=True),
+                        nullable=False, server_default=text('now()'))
+
 
 class Sala(Base):
     __tablename__ = "sala"
 
-    Id_sala = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     ativa = Column(Boolean, nullable=False)
     caixa_som = Column(Boolean, nullable=False)
     capacidade = Column(Integer, nullable=False)
@@ -28,4 +45,32 @@ class Sala(Base):
     nome_sala = Column(String, nullable=False)
     projetor = Column(Boolean, nullable=False)
     computador = Column(Integer, nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True),
+                        nullable=False, server_default=text('now()'))
 
+class Software(Base):
+    __tablename__ = "softwares"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    nomeSoftware = Column(String, nullable=False)
+    licenca = Column(Boolean, nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True),
+                        nullable=False, server_default=text('now()'))
+
+class SalaSoftware(Base):
+    __tablename__ = "salasoftwares"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    Id_sala = Column(Integer, nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True),
+                        nullable=False, server_default=text('now()'))
+
+class Reserva(Base):
+    __tablename__ = "reservas"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    Data = Column(DateTime(timezone=False))
+    Id_sala = Column(Integer, nullable=False)
+    Id_professor = Column(Integer, nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True),
+                        nullable=False, server_default=text('now()'))

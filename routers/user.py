@@ -1,12 +1,9 @@
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
-
-from ..utils import utils
-
-from ..auth import oauth2
-
-from ..models import models
-from ..connection.database import get_db, engine
-from ..schemas import schemas
+import utils.utils as utils
+from routers.auth import oauth2
+import models.models as models
+from database import get_db, engine
+import schemas
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
@@ -16,13 +13,13 @@ from typing import List, Optional
 models.Base.metadata.create_all(bind=engine)
 
 router = APIRouter(
-    prefix="/users",
+    prefix="/user",
     tags=['Users']
 )
 
 
-@router.post("/createuser", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+@router.post("/users", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
 
   hashed_password = utils.hash(user.password)
   user.password = hashed_password
@@ -35,16 +32,16 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
   return new_user
 
 
-@router.get('/createuser/{id}', response_model=schemas.UserOut)
-def get_user(id: int, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
+@router.get('/users/{id}', response_model=schemas.UserOut)
+def get_user(id: int, db: Session = Depends(get_db)):
     user = db.query(models.Usuario).filter(models.Usuario.id == id).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"User with id: {id} does not exist")
+                            detail=f"Usuário com o id: {id} não existe")
 
     return user
 
-@router.delete("/createuser/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/users/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
 
     users_query = db.query(models.Usuario).filter(models.Usuario.id == id)
@@ -53,7 +50,11 @@ def delete_post(id: int, db: Session = Depends(get_db), user_id: int = Depends(o
 
     if user == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"post with id: {id} does not exist")
+                            detail=f"Usuário com o id: {id} não existe")
+    
+    if user.type_user != oauth2.get_current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Not authorized to perform requested action")
 
     users_query.delete(synchronize_session=False)
     db.commit()
@@ -61,7 +62,7 @@ def delete_post(id: int, db: Session = Depends(get_db), user_id: int = Depends(o
     return users_query
 
 @router.get("/users")
-def get_users(db: Session = Depends(get_db),limit: int = 10, skip: int = 0, search: Optional[str] = "", ):
+def get_users(db: Session = Depends(get_db),limit: int = 10, skip: int = 0, search: Optional[str] = "", user_id: int = Depends(oauth2.get_current_user)):
     users = db.query(models.Usuario).all()
     return {"data": users}
 
@@ -75,7 +76,11 @@ def update_users(id: int, updated_post: schemas.UserCreate, db: Session = Depend
 
     if users == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"post with id: {id} does not exist")
+                            detail=f"Usuário com o id: {id} não existe")
+
+    if users.type_user != oauth2.get_current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Not authorized to perform requested action")
 
     users_query.update(updated_post.dict(), synchronize_session=False)
 
