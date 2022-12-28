@@ -5,13 +5,12 @@ from fastapi import Form
 from typing import Optional
 
 
-
 class UserOut(BaseModel):
   id: int
   login: str
   password: str
   materiaUsuario: str
-  raUsuario: str
+  raUsuario: int
 
   class Config:
      orm_mode = True

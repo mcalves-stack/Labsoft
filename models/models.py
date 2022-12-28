@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DATETIME
 from sqlalchemy.sql.expression import Null
-from database import Base
+from connection.database import Base
 
 class Usuario(Base):
     __tablename__ = "usuarios"
